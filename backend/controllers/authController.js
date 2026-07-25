@@ -19,9 +19,7 @@ const generateToken = (user) => {
   );
 };
 
-// =======================
 // Register Controller
-// =======================
 const register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -76,9 +74,7 @@ const register = async (req, res) => {
   }
 };
 
-// =======================
 // Login Controller
-// =======================
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -138,7 +134,25 @@ const login = async (req, res) => {
   }
 };
 
+// Get Current Logged-in User
+const getMe = async (req, res) => {
+  try {
+    return res.status(200).json({
+      success: true,
+      user: req.user,
+    });
+  } catch (error) {
+    console.error("GetMe Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to fetch user profile.",
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
+  getMe,
 };
