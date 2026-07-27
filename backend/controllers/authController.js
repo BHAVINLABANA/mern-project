@@ -22,13 +22,13 @@ const generateToken = (user) => {
 // Register Controller
 const register = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
     // Basic Validation
-    if (!name || !email || !password || !role) {
+    if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Name, email, password, and role are required.",
+        message: "Name, email, and password are required.",
       });
     }
 
@@ -47,7 +47,7 @@ const register = async (req, res) => {
       name,
       email,
       password,
-      role,
+      role: "Customer",
     });
 
     return res.status(201).json({

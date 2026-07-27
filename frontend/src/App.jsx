@@ -1,14 +1,20 @@
+import { Routes, Route } from "react-router-dom";
+
+import Home from "./pages/customer/Home";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import Dashboard from "./pages/vendor/Dashboard";
+import NotFound from "./pages/NotFound";
+
 function App() {
   return (
-    <div className="container mt-5">
-      <h1 className="text-primary">
-        🚀 MERN Project Started Successfully
-      </h1>
-
-      <button className="btn btn-success mt-3">
-        Bootstrap Working
-      </button>
-    </div>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/vendor/dashboard" element={<Dashboard />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 
