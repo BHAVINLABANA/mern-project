@@ -30,8 +30,12 @@ function Login() {
 
       navigate("/vendor/dashboard");
     } catch (err) {
-      alert(err.response?.data?.message || "Login Failed");
-    }
+        console.log(err);
+
+        alert(err.response?.data?.message || err.message);
+
+        console.log("Response:", err.response?.data);
+      }
   };
 
   return (

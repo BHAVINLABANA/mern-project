@@ -20,10 +20,12 @@ app.use(express.json());
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const testRoutes = require("./routes/testRoutes");
+const storeRoutes = require("./routes/storeRoutes");
 
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/test", testRoutes);
+app.use("/api/stores", storeRoutes);
 
 app.get("/", (req, res) => {
   res.send("🚀 MERN Backend is Running!");
