@@ -21,14 +21,16 @@ const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const testRoutes = require("./routes/testRoutes");
 const storeRoutes = require("./routes/storeRoutes");
+const productRoutes = require("./routes/productRoutes");
 
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/test", testRoutes);
 app.use("/api/stores", storeRoutes);
+app.use("/api/products", productRoutes);
 
 app.get("/", (req, res) => {
-  res.send("🚀 MERN Backend is Running!");
+  res.send("MERN Backend is Running!");
 });
 
 const PORT = process.env.PORT || 5000;
