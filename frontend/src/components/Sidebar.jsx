@@ -1,6 +1,13 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 function Sidebar() {
+  const linkClass = ({ isActive }) =>
+    `px-4 py-2 rounded transition ${
+      isActive
+        ? "bg-blue-600 text-white"
+        : "hover:bg-slate-700 text-gray-200"
+    }`;
+
   return (
     <aside className="w-64 min-h-screen bg-slate-900 text-white">
       <div className="p-6 text-2xl font-bold border-b border-slate-700">
@@ -8,33 +15,21 @@ function Sidebar() {
       </div>
 
       <nav className="flex flex-col p-4 gap-2">
-        <Link
-          to="/vendor/dashboard"
-          className="px-4 py-2 rounded hover:bg-slate-700"
-        >
-          Dashboard
-        </Link>
+        <NavLink to="/vendor/dashboard" className={linkClass}>
+          📊 Dashboard
+        </NavLink>
 
-        <Link
-          to="/vendor/store"
-          className="px-4 py-2 rounded hover:bg-slate-700"
-        >
-          Store
-        </Link>
+        <NavLink to="/vendor/store" className={linkClass}>
+          🏪 Store
+        </NavLink>
 
-        <Link
-          to="/vendor/products"
-          className="px-4 py-2 rounded hover:bg-slate-700"
-        >
-          Products
-        </Link>
+        <NavLink to="/vendor/products" className={linkClass}>
+          📦 Products
+        </NavLink>
 
-        <Link
-          to="/vendor/orders"
-          className="px-4 py-2 rounded hover:bg-slate-700"
-        >
-          Orders
-        </Link>
+        <NavLink to="/vendor/orders" className={linkClass}>
+          📋 Orders
+        </NavLink>
       </nav>
     </aside>
   );

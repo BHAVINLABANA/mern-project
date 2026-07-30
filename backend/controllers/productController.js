@@ -61,6 +61,26 @@ exports.createProduct = async (req, res) => {
   }
 };
 
+// Get Vendor Products
+exports.getMyProducts = async (req, res) => {
+  try {
+    const products = await Product.find({
+      createdBy: req.user._id,
+    }).sort("-createdAt");
+
+    res.status(200).json({
+      success: true,
+      count: products.length,
+      products,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 // Get All Products
 exports.getProducts = async (req, res) => {
   try {

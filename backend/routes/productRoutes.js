@@ -8,6 +8,7 @@ const {
   getProduct,
   updateProduct,
   deleteProduct,
+  getMyProducts,
 } = require("../controllers/productController");
 
 const { protect, authorize } = require("../middleware/authMiddleware");
@@ -25,6 +26,12 @@ router.delete("/:id", protect, authorize("vendor"), deleteProduct);
 
 // Public Routes
 router.get("/", getProducts);
+router.get(
+    "/my-products",
+    protect,
+    authorize("vendor"),
+    getMyProducts
+    );
 router.get("/:id", getProduct);
 
 module.exports = router;

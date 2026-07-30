@@ -6,6 +6,9 @@ import Register from "./pages/auth/Register";
 import Dashboard from "./pages/vendor/Dashboard";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Products from "./pages/vendor/Products";
+import AddProduct from "./pages/vendor/AddProduct";
+import EditProduct from "./pages/vendor/EditProduct";
 
 function App() {
   return (
@@ -22,7 +25,23 @@ function App() {
           </ProtectedRoute>
         }
       />
-
+      <Route path="/vendor/products" element={<Products />} />
+      <Route
+        path="/vendor/products/add"
+        element={
+          <ProtectedRoute>
+            <AddProduct />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/vendor/products/edit/:id"
+        element={
+          <ProtectedRoute>
+            <EditProduct />
+          </ProtectedRoute>
+        }
+      />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
