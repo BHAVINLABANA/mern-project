@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Products from "./pages/vendor/Products";
 import AddProduct from "./pages/vendor/AddProduct";
 import EditProduct from "./pages/vendor/EditProduct";
+import ProductDetails from "./pages/customer/ProductDetails";
 
 function App() {
   return (
@@ -41,6 +42,10 @@ function App() {
             <EditProduct />
           </ProtectedRoute>
         }
+      />
+      <Route
+        path="/product/:id"
+        element={<ProductDetails />}
       />
       <Route path="*" element={<NotFound />} />
     </Routes>

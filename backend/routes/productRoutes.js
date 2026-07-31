@@ -9,6 +9,8 @@ const {
   updateProduct,
   deleteProduct,
   getMyProducts,
+  getCustomerProducts,
+  getRelatedProducts,
 } = require("../controllers/productController");
 
 const { protect, authorize } = require("../middleware/authMiddleware");
@@ -21,7 +23,8 @@ router.post(
   upload.array("images", 5),
   createProduct
 );
-router.put("/:id", protect, authorize("vendor"), updateProduct);
+
+router.put("/:id", protect, authorize("vendor"),upload. array("images", 5), updateProduct);
 router.delete("/:id", protect, authorize("vendor"), deleteProduct);
 
 // Public Routes
@@ -32,6 +35,8 @@ router.get(
     authorize("vendor"),
     getMyProducts
     );
+router.get("/customer", getCustomerProducts);   
+router.get("/:id/related", getRelatedProducts);
 router.get("/:id", getProduct);
 
 module.exports = router;

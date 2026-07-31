@@ -159,10 +159,27 @@ exports.updateProduct = async (req, res) => {
       });
     }
 
-    product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    // Build update data
+    const updateData = {
+      ...req.body,
+    };
+
+    // If new images are uploaded, replace old images
+    if (req.files && req.files.length > 0) {
+      updateData.images = req.files.map((file) => ({
+        public_id: file.filename,
+        url: file.path,
+      }));
+    }
+
+    product = await Product.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
     res.status(200).json({
       success: true,
@@ -203,6 +220,67 @@ exports.deleteProduct = async (req, res) => {
       success: true,
       message: "Product deleted successfully.",
     });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Get Products For Customers
+exports.getCustomerProducts = async (req, res) => {
+  try {
+    const resultPerPage = 12;
+
+    const apiFeatures = new APIFeatures(
+      Product.find({ status: "Active" }).populate("store", "name"),
+      req.query
+    )
+      .search()
+      .filter()
+      .sort()
+      .paginate(resultPerPage);
+
+    const products = await apiFeatures.query;
+
+    res.status(200).json({
+      success: true,
+      count: products.length,
+      resultPerPage,
+      products,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Get Related Products
+exports.getRelatedProducts = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    const relatedProducts = await Product.find({
+      category: product.category,
+      _id: { $ne: product._id },
+      status: "Active",
+    }).limit(4);
+
+    res.status(200).json({
+      success: true,
+      products: relatedProducts,
+    });
+
   } catch (error) {
     res.status(500).json({
       success: false,

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 // adjust path if needed
 const Products = () => {
@@ -28,10 +29,10 @@ const Products = () => {
         prevProducts.filter((product) => product._id !== id)
       );
 
-      alert("Product deleted successfully!");
+      toast.success("Product deleted successfully!");
     } catch (error) {
       console.error(error);
-      alert("Failed to delete product.");
+      toast.success("Failed to delete product.");
     }
   };
 

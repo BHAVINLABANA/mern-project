@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../../services/api";
+import toast from "react-hot-toast";
 
 function AddProduct() {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ function AddProduct() {
   });
 
   const [images, setImages] = useState([]);
+  const [previewImages, setPreviewImages] = useState([]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -24,7 +26,13 @@ function AddProduct() {
   };
 
   const handleImageChange = (e) => {
-    setImages(e.target.files);
+    const files = Array.from(e.target.files);
+
+    setImages(files);
+
+    const previews = files.map((file) => URL.createObjectURL(file));
+
+    setPreviewImages(previews);
   };
 
   const handleSubmit = async (e) => {
@@ -47,7 +55,7 @@ function AddProduct() {
         },
       });
 
-      alert("Product Added Successfully!");
+      toast.success("Product added successfully!");
 
       setFormData({
         name: "",
@@ -62,7 +70,7 @@ function AddProduct() {
       setImages([]);
     } catch (err) {
       console.error(err);
-      alert("Failed to add product.");
+      toast.error("Failed to add product.");
     }
   };
 
@@ -134,9 +142,20 @@ function AddProduct() {
         <input
           type="file"
           multiple
+          accept="image/*"
           onChange={handleImageChange}
-          className="w-full"
         />
+
+        <div className="flex flex-wrap gap-3 mt-4">
+          {previewImages.map((img, index) => (
+            <img
+              key={index}
+              src={img}
+              alt="Preview"
+              className="w-24 h-24 object-cover rounded border"
+            />
+          ))}
+        </div>
 
         <label className="flex items-center gap-2">
           <input

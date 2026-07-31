@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../services/api";
+import toast from "react-hot-toast";
 
 function EditProduct() {
   const { id } = useParams();
@@ -15,6 +16,10 @@ function EditProduct() {
     brand: "",
     featured: false,
   });
+
+  const [images, setImages] = useState([]);
+  const [previewImages, setPreviewImages] = useState([]);
+  const [existingImages, setExistingImages] = useState([]);
 
   useEffect(() => {
     fetchProduct();
@@ -33,9 +38,10 @@ function EditProduct() {
         brand: data.product.brand,
         featured: data.product.featured,
       });
+      setExistingImages(data.product.images || []);
     } catch (err) {
       console.error(err);
-      alert("Failed to load product.");
+      toast.success("Failed to load product.");
     }
   };
 
@@ -48,19 +54,48 @@ function EditProduct() {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
 
-    try {
-      await api.put(`/products/${id}`, formData);
+    setImages(files);
 
-      alert("Product updated successfully!");
-      navigate("/vendor/products");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to update product.");
-    }
+    const previews = files.map((file) => URL.createObjectURL(file));
+
+    setPreviewImages(previews);
   };
+
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const productData = new FormData();
+
+    productData.append("name", formData.name);
+    productData.append("description", formData.description);
+    productData.append("price", formData.price);
+    productData.append("stock", formData.stock);
+    productData.append("category", formData.category);
+    productData.append("brand", formData.brand);
+    productData.append("featured", formData.featured);
+
+    // Append selected images
+    images.forEach((image) => {
+      productData.append("images", image);
+    });
+
+    await api.put(`/products/${id}`, productData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    toast.success("Product updated successfully!");
+    navigate("/vendor/products");
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to update product.");
+  }
+};
 
   return (
     <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow">
@@ -116,6 +151,33 @@ function EditProduct() {
           onChange={handleChange}
           className="w-full border p-3 rounded"
         />
+
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={handleImageChange}
+        />
+
+        <div className="flex flex-wrap gap-3 mt-4">
+          {previewImages.length > 0
+            ? previewImages.map((img, index) => (
+                <img
+                  key={index}
+                  src={img}
+                  alt="Preview"
+                  className="w-24 h-24 object-cover rounded border"
+                />
+              ))
+            : existingImages.map((img, index) => (
+                <img
+                  key={index}
+                  src={img.url}
+                  alt="Product"
+                  className="w-24 h-24 object-cover rounded border"
+                />
+              ))}
+        </div>
 
         <label className="flex items-center gap-2">
           <input
