@@ -10,6 +10,7 @@ import Products from "./pages/vendor/Products";
 import AddProduct from "./pages/vendor/AddProduct";
 import EditProduct from "./pages/vendor/EditProduct";
 import ProductDetails from "./pages/customer/ProductDetails";
+import Cart from "./pages/customer/Cart";
 
 function App() {
   return (
@@ -46,6 +47,14 @@ function App() {
       <Route
         path="/product/:id"
         element={<ProductDetails />}
+      />
+      <Route
+        path="/cart"
+        element={
+          <ProtectedRoute>
+            <Cart />
+          </ProtectedRoute>
+        }
       />
       <Route path="*" element={<NotFound />} />
     </Routes>

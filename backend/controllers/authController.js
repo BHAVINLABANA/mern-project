@@ -3,10 +3,6 @@ const User = require("../models/User");
 
 // Generate JWT Token
 const generateToken = (user) => {
-  if (!process.env.JWT_SECRET) {
-    throw new Error("JWT_SECRET is not configured.");
-  }
-
   return jwt.sign(
     {
       id: user._id,
@@ -19,67 +15,66 @@ const generateToken = (user) => {
   );
 };
 
-// Register Controller
-const register = async (req, res) => {
+// ======================
+// Register User
+// ======================
+exports.register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
-    // Basic Validation
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Name, email, and password are required.",
+        message: "Please provide all required fields.",
       });
     }
 
-    // Check existing user
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      return res.status(409).json({
+      return res.status(400).json({
         success: false,
-        message: "A user with this email already exists.",
+        message: "Email already registered.",
       });
     }
 
-    // Password hashing is handled by User model middleware
+    // Allow only customer or vendor
+    const userRole =
+      role === "vendor" ? "vendor" : "customer";
+
     const user = await User.create({
       name,
       email,
       password,
-      role: "Customer",
+      role: userRole,
     });
 
-    return res.status(201).json({
+    const token = generateToken(user);
+
+    res.status(201).json({
       success: true,
-      message: "User registered successfully.",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        profileImage: user.profileImage,
-        isVerified: user.isVerified,
-        isActive: user.isActive,
-        createdAt: user.createdAt,
-      },
+      message: "Registration successful.",
+      token,
+      user,
     });
-  } catch (error) {
-    console.error("Register Error:", error);
 
-    return res.status(500).json({
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
       success: false,
-      message: "Unable to register user. Please try again.",
+      message: error.message,
     });
   }
 };
 
-// Login Controller
-const login = async (req, res) => {
+// ======================
+// Login User
+// ======================
+exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Basic Validation
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -87,7 +82,6 @@ const login = async (req, res) => {
       });
     }
 
-    // Include password for comparison
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
@@ -97,7 +91,6 @@ const login = async (req, res) => {
       });
     }
 
-    // Compare Password
     const isMatch = await user.comparePassword(password);
 
     if (!isMatch) {
@@ -107,52 +100,45 @@ const login = async (req, res) => {
       });
     }
 
-    // Generate JWT
     const token = generateToken(user);
 
-    return res.status(200).json({
+    user.password = undefined;
+
+    res.status(200).json({
       success: true,
       message: "Login successful.",
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        profileImage: user.profileImage,
-        isVerified: user.isVerified,
-        isActive: user.isActive,
-      },
+      user,
     });
-  } catch (error) {
-    console.error("Login Error:", error);
 
-    return res.status(500).json({
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
       success: false,
-      message: "Unable to log in. Please try again.",
+      message: error.message,
     });
   }
 };
 
-// Get Current Logged-in User
-const getMe = async (req, res) => {
+// ======================
+// Get Logged In User
+// ======================
+exports.getMe = async (req, res) => {
   try {
-    return res.status(200).json({
-      success: true,
-      user: req.user,
-    });
-  } catch (error) {
-    console.error("GetMe Error:", error);
+    const user = await User.findById(req.user._id);
 
-    return res.status(500).json({
+    res.status(200).json({
+      success: true,
+      user,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
       success: false,
-      message: "Unable to fetch user profile.",
+      message: error.message,
     });
   }
-};
-
-module.exports = {
-  register,
-  login,
-  getMe,
 };

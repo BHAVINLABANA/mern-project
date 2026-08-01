@@ -1,11 +1,15 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 
 function Register() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
+    role: "customer",
   });
 
   const handleChange = (e) => {
@@ -25,11 +29,17 @@ function Register() {
 
       console.log(res.data);
 
+      // Save token after registration
+      localStorage.setItem("token", res.data.token);
+
       setFormData({
         name: "",
         email: "",
         password: "",
+        role: "customer",
       });
+
+      navigate("/login");
     } catch (err) {
       alert(err.response?.data?.message || "Registration Failed");
     }
@@ -64,6 +74,7 @@ function Register() {
             value={formData.name}
             onChange={handleChange}
             style={inputStyle}
+            required
           />
 
           <input
@@ -73,6 +84,7 @@ function Register() {
             value={formData.email}
             onChange={handleChange}
             style={inputStyle}
+            required
           />
 
           <input
@@ -82,7 +94,18 @@ function Register() {
             value={formData.password}
             onChange={handleChange}
             style={inputStyle}
+            required
           />
+
+          <select
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            style={inputStyle}
+          >
+            <option value="customer">Customer</option>
+            <option value="vendor">Vendor</option>
+          </select>
 
           <button type="submit" style={buttonStyle}>
             Register

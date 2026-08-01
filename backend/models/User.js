@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: String,
       trim: true,
+      default: "",
     },
 
     store: {
@@ -35,22 +36,18 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
       minlength: [8, "Password must be at least 8 characters long"],
-      select: false, // Never return password unless explicitly requested
+      select: false,
     },
 
     role: {
       type: String,
-      enum: {
-        values: ["superadmin", "vendor", "customer"],
-        message: "Role must be SuperAdmin, Vendor, or Customer",
-      },
-      default: "Customer",
+      enum: ["superadmin", "vendor", "customer"],
+      default: "customer",
     },
 
     profileImage: {
       type: String,
-      trim: true,
-      default: null,
+      default: "",
     },
 
     isVerified: {
@@ -68,18 +65,16 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// Hash the password only when it changes.
+// Hash password before saving
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
 
   this.password = await bcrypt.hash(this.password, 12);
 });
 
-// Compare a plain-text password with the stored hash.
-userSchema.methods.comparePassword = async function comparePassword(
-  enteredPassword
-) {
-  return bcrypt.compare(enteredPassword, this.password);
+// Compare entered password with hashed password
+userSchema.methods.comparePassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
 };
 
 module.exports = mongoose.model("User", userSchema);

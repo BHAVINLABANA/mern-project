@@ -42,6 +42,20 @@ function ProductDetails() {
     }
   };
 
+  const addToCart = async () => {
+    try {
+      await api.post("/cart", {
+        productId: product._id,
+        quantity: 1,
+      });
+
+      alert("Product added to cart!");
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.message || "Failed to add to cart.");
+    }
+  };
+
   if (loading) {
     return (
       <div className="text-center py-20 text-2xl font-semibold">
@@ -139,6 +153,7 @@ function ProductDetails() {
           </div>
 
           <button
+            onClick={addToCart}
             className="mt-10 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg transition"
           >
             Add to Cart

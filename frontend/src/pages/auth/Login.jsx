@@ -23,19 +23,30 @@ function Login() {
     try {
       const res = await api.post("/auth/login", formData);
 
+      // Save token and user
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
       alert("Login Successful!");
 
-      navigate("/vendor/dashboard");
-    } catch (err) {
-        console.log(err);
-
-        alert(err.response?.data?.message || err.message);
-
-        console.log("Response:", err.response?.data);
+      // Redirect based on role
+      if (res.data.user.role === "vendor") {
+        navigate("/vendor/dashboard");
+      } else if (res.data.user.role === "customer") {
+        navigate("/");
+      } else if (res.data.user.role === "superadmin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
       }
+
+    } catch (err) {
+      console.log(err);
+
+      alert(err.response?.data?.message || err.message);
+
+      console.log("Response:", err.response?.data);
+    }
   };
 
   return (
