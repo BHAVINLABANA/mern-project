@@ -1,7 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
-const {placeOrder,getMyOrders,getVendorOrders,} = require("../controllers/orderController");
+const {
+    placeOrder,
+    getMyOrders,
+    getVendorOrders,
+    updateOrderStatus,
+} = require("../controllers/orderController");
 
 const { protect, authorize } = require("../middleware/authMiddleware");
 
@@ -18,6 +23,12 @@ router.get(
   protect,
   authorize("vendor"),
   getVendorOrders
+);
+router.put(
+  "/:id/status",
+  protect,
+  authorize("vendor"),
+  updateOrderStatus
 );
 
 router.post(

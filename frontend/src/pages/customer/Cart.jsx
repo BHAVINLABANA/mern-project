@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import api from "../../services/api";
+import { useCart } from "../../context/CartContext";
 
 function Cart() {
   const [cart, setCart] = useState([]);
+  const { fetchCartCount } = useCart();
 
   useEffect(() => {
     fetchCart();
@@ -24,6 +27,7 @@ function Cart() {
       });
 
       fetchCart();
+      fetchCartCount();
     } catch (error) {
       console.error(error);
     }
@@ -36,6 +40,7 @@ function Cart() {
       });
 
       fetchCart();
+      fetchCartCount();
     } catch (error) {
       console.error(error);
     }
@@ -46,6 +51,7 @@ function Cart() {
       await api.delete(`/cart/${id}`);
 
       fetchCart();
+      fetchCartCount();
     } catch (error) {
       console.error(error);
     }
@@ -145,9 +151,12 @@ function Cart() {
                 <span>₹{total}</span>
               </div>
 
-              <button className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg">
+              <Link
+                to="/checkout"
+                className="block w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg text-center"
+              >
                 Proceed to Checkout
-              </button>
+              </Link>
             </div>
           </div>
         </>
