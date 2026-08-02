@@ -75,7 +75,7 @@ exports.getCart = async (req, res) => {
   }
 };
 
-// Update Quantity
+// Update Cart Quantity
 exports.updateCartItem = async (req, res) => {
   try {
     const { quantity } = req.body;
@@ -89,12 +89,21 @@ exports.updateCartItem = async (req, res) => {
       });
     }
 
+    if (quantity <= 0) {
+      await cartItem.deleteOne();
+
+      return res.status(200).json({
+        success: true,
+        message: "Item removed from cart",
+      });
+    }
+
     cartItem.quantity = quantity;
     await cartItem.save();
 
     res.status(200).json({
       success: true,
-      message: "Quantity updated",
+      message: "Cart updated successfully",
       cartItem,
     });
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../services/api";
 import ProductCard from "../../components/customer/ProductCard";
+import { useCart } from "../../context/CartContext";
 
 function ProductDetails() {
   const { id } = useParams();
@@ -10,6 +11,7 @@ function ProductDetails() {
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [selectedImage, setSelectedImage] = useState("");
   const [loading, setLoading] = useState(true);
+  const { fetchCartCount } = useCart();
 
   useEffect(() => {
     fetchProduct();
@@ -48,7 +50,7 @@ function ProductDetails() {
         productId: product._id,
         quantity: 1,
       });
-
+      fetchCartCount();
       alert("Product added to cart!");
     } catch (error) {
       console.error(error);
