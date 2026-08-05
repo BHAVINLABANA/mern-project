@@ -12,6 +12,7 @@ import Products from "./pages/vendor/Products";
 import AddProduct from "./pages/vendor/AddProduct";
 import EditProduct from "./pages/vendor/EditProduct";
 import VendorOrders from "./pages/vendor/VendorOrders";
+import Store from "./pages/vendor/Store";
 
 import ProductDetails from "./pages/customer/ProductDetails";
 import Cart from "./pages/customer/Cart";
@@ -84,6 +85,15 @@ function App() {
           element={
             <ProtectedRoute role="vendor">
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/store"
+          element={
+            <ProtectedRoute role="vendor">
+              <Store />
             </ProtectedRoute>
           }
         />

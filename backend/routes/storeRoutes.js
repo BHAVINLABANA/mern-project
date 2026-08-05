@@ -3,7 +3,8 @@ const router = express.Router();
 
 const {
   createStore,
-  getDashboardStats,
+  getMyStore,
+  updateStore,
 } = require("../controllers/storeController");
 
 const {
@@ -19,12 +20,18 @@ router.post(
   createStore
 );
 
-// Dashboard Statistics
 router.get(
-  "/dashboard-stats",
+  "/my-store",
   protect,
   authorize("vendor"),
-  getDashboardStats
+  getMyStore
+);
+
+router.put(
+  "/",
+  protect,
+  authorize("vendor"),
+  updateStore
 );
 
 module.exports = router;

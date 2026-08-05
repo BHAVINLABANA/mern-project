@@ -21,6 +21,8 @@ exports.placeOrder = async (req, res) => {
     // Prepare order items
     const items = cartItems.map((item) => ({
       product: item.product._id,
+      store: item.product.store,
+      vendor: item.product.createdBy,
       quantity: item.quantity,
       price: item.product.price,
     }));
@@ -83,22 +85,17 @@ exports.getMyOrders = async (req, res) => {
 // Get Vendor Orders
 exports.getVendorOrders = async (req, res) => {
   try {
-    const orders = await Order.find()
+    const orders = await Order.find({
+      "items.vendor": req.user._id,
+    })
       .populate("user", "name email")
-      .populate("items.product");
-
-    const vendorOrders = orders.filter((order) =>
-      order.items.some(
-        (item) =>
-          item.product &&
-          item.product.createdBy.toString() === req.user._id.toString()
-      )
-    );
+      .populate("items.product", "name images price")
+      .sort("-createdAt");
 
     res.status(200).json({
       success: true,
-      count: vendorOrders.length,
-      orders: vendorOrders,
+      count: orders.length,
+      orders,
     });
   } catch (error) {
     res.status(500).json({

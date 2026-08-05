@@ -51,56 +51,53 @@ const createStore = async (req, res) => {
   }
 };
 
-// Get Vendor Dashboard Statistics
-const getDashboardStats = async (req, res) => {
+
+// Get My Store
+const getMyStore = async (req, res) => {
   try {
-    // Total Products
-    const totalProducts = await Product.countDocuments({
-      createdBy: req.user._id,
-    });
-
-    // Get vendor products
-    const vendorProducts = await Product.find({
-      createdBy: req.user._id,
-    }).select("_id");
-
-    const productIds = vendorProducts.map((product) => product._id.toString());
-
-    // Get all orders
-    const orders = await Order.find().populate("items.product");
-
-    let totalOrders = 0;
-    let totalRevenue = 0;
-
-    const customers = new Set();
-
-    orders.forEach((order) => {
-      let hasVendorProduct = false;
-
-      order.items.forEach((item) => {
-        if (
-          item.product &&
-          productIds.includes(item.product._id.toString())
-        ) {
-          hasVendorProduct = true;
-          totalRevenue += item.price * item.quantity;
-        }
-      });
-
-      if (hasVendorProduct) {
-        totalOrders++;
-        customers.add(order.user.toString());
-      }
+    const store = await Store.findOne({
+      owner: req.user._id,
     });
 
     res.status(200).json({
       success: true,
-      stats: {
-        totalProducts,
-        totalOrders,
-        totalRevenue,
-        totalCustomers: customers.size,
-      },
+      store,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Update Store
+const updateStore = async (req, res) => {
+  try {
+    const { name, description, address, phone } = req.body;
+
+    const store = await Store.findOne({
+      owner: req.user._id,
+    });
+
+    if (!store) {
+      return res.status(404).json({
+        success: false,
+        message: "Store not found",
+      });
+    }
+
+    store.name = name;
+    store.description = description;
+    store.address = address;
+    store.phone = phone;
+
+    await store.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Store updated successfully.",
+      store,
     });
   } catch (error) {
     res.status(500).json({
@@ -112,5 +109,6 @@ const getDashboardStats = async (req, res) => {
 
 module.exports = {
   createStore,
-  getDashboardStats,
+  getMyStore,
+  updateStore,
 };

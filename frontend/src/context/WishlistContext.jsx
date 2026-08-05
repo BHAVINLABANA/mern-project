@@ -10,8 +10,9 @@ export const WishlistProvider = ({ children }) => {
   const fetchWishlist = async () => {
     try {
       const token = localStorage.getItem("token");
+      const user = JSON.parse(localStorage.getItem("user"));
 
-      if (!token) {
+      if (!token || user?.role !== "customer") {
         setWishlist([]);
         setWishlistCount(0);
         return;

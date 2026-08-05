@@ -152,8 +152,17 @@ function Cart() {
               </div>
 
               <Link
-                to="/checkout"
-                className="block w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg text-center"
+                to={cart.length > 0 ? "/checkout" : "#"}
+                onClick={(e) => {
+                  if (cart.length === 0) {
+                    e.preventDefault();
+                  }
+                }}
+                className={`block w-full mt-6 text-center py-3 rounded-lg ${
+                  cart.length > 0
+                    ? "bg-blue-600 hover:bg-blue-700 text-white"
+                    : "bg-gray-400 cursor-not-allowed text-white"
+                }`}
               >
                 Proceed to Checkout
               </Link>

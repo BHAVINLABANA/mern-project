@@ -1,16 +1,22 @@
-import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 
 function DashboardLayout({ children }) {
   return (
-    <div className="flex">
-      <Sidebar />
+    <div className="min-h-screen bg-slate-100">
 
-      <div className="flex-1 min-h-screen bg-slate-100">
-        <Navbar />
+      <Navbar />
 
-        <main className="p-6">{children}</main>
+      <div className="flex">
+
+        <Sidebar />
+
+        <main className="flex-1 p-8 overflow-y-auto">
+          {children}
+        </main>
+
       </div>
+
     </div>
   );
 }
