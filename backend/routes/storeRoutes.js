@@ -1,18 +1,30 @@
 const express = require("express");
 const router = express.Router();
 
-const { createStore } = require("../controllers/storeController");
+const {
+  createStore,
+  getDashboardStats,
+} = require("../controllers/storeController");
+
 const {
   protect,
   authorize,
 } = require("../middleware/authMiddleware");
 
-// Vendor only
+// Create Store
 router.post(
   "/",
   protect,
-  authorize("Vendor"),
+  authorize("vendor"),
   createStore
+);
+
+// Dashboard Statistics
+router.get(
+  "/dashboard-stats",
+  protect,
+  authorize("vendor"),
+  getDashboardStats
 );
 
 module.exports = router;

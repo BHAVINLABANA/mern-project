@@ -18,6 +18,10 @@ import Cart from "./pages/customer/Cart";
 import Checkout from "./pages/customer/Checkout";
 import MyOrders from "./pages/customer/MyOrders";
 
+import Wishlist from "./pages/customer/Wishlist";
+
+import Profile from "./pages/Profile";
+
 function App() {
   const location = useLocation();
 
@@ -65,6 +69,15 @@ function App() {
           }
         />
 
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Vendor Routes */}
         <Route
           path="/vendor/dashboard"
@@ -107,6 +120,15 @@ function App() {
           element={
             <ProtectedRoute role="vendor">
               <VendorOrders />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/wishlist"
+          element={
+            <ProtectedRoute role="customer">
+              <Wishlist />
             </ProtectedRoute>
           }
         />

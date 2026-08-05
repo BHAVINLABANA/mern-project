@@ -288,3 +288,135 @@ exports.getRelatedProducts = async (req, res) => {
     });
   }
 };
+
+// Add or Update Product Review
+exports.addProductReview = async (req, res) => {
+  try {
+    const { rating, comment } = req.body;
+
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found.",
+      });
+    }
+
+    const review = {
+      user: req.user._id,
+      name: req.user.name,
+      rating: Number(rating),
+      comment,
+    };
+
+    const existingReview = product.reviews.find(
+      (rev) => rev.user.toString() === req.user._id.toString()
+    );
+
+    if (existingReview) {
+      existingReview.rating = Number(rating);
+      existingReview.comment = comment;
+    } else {
+      product.reviews.push(review);
+    }
+
+    product.numReviews = product.reviews.length;
+
+    product.averageRating =
+      product.reviews.reduce((sum, rev) => sum + rev.rating, 0) /
+      product.numReviews;
+
+    await product.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Review submitted successfully.",
+      product,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Get Product Reviews
+exports.getProductReviews = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found.",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      averageRating: product.averageRating,
+      numReviews: product.numReviews,
+      reviews: product.reviews,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Delete Product Review
+exports.deleteProductReview = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found.",
+      });
+    }
+
+    const review = product.reviews.id(req.params.reviewId);
+
+    if (!review) {
+      return res.status(404).json({
+        success: false,
+        message: "Review not found.",
+      });
+    }
+
+    // Only review owner can delete
+    if (review.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to delete this review.",
+      });
+    }
+
+    review.deleteOne();
+
+    product.numReviews = product.reviews.length;
+
+    product.averageRating =
+      product.numReviews === 0
+        ? 0
+        : product.reviews.reduce((sum, rev) => sum + rev.rating, 0) /
+          product.numReviews;
+
+    await product.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Review deleted successfully.",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

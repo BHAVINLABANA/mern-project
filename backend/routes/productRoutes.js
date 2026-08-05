@@ -11,6 +11,9 @@ const {
   getMyProducts,
   getCustomerProducts,
   getRelatedProducts,
+  addProductReview,
+  getProductReviews,
+  deleteProductReview,
 } = require("../controllers/productController");
 
 const { protect, authorize } = require("../middleware/authMiddleware");
@@ -26,6 +29,26 @@ router.post(
 
 router.put("/:id", protect, authorize("vendor"),upload. array("images", 5), updateProduct);
 router.delete("/:id", protect, authorize("vendor"), deleteProduct);
+
+// Customer Review Routes
+router.post(
+  "/:id/review",
+  protect,
+  authorize("customer"),
+  addProductReview
+);
+
+router.get(
+  "/:id/reviews",
+  getProductReviews
+);
+
+router.delete(
+  "/:id/review/:reviewId",
+  protect,
+  authorize("customer"),
+  deleteProductReview
+);
 
 // Public Routes
 router.get("/", getProducts);
