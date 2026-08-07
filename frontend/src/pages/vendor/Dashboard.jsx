@@ -57,13 +57,17 @@ function Dashboard() {
 
         <div>
 
-          <h1 className="text-4xl font-bold">
-            Dashboard
-          </h1>
+          <div className="mb-8">
 
-          <p className="text-gray-500 mt-1">
-            Welcome back! Here's what's happening with your store.
-          </p>
+            <h1 className="text-4xl font-bold">
+              Dashboard Overview
+            </h1>
+
+            <p className="text-gray-500 mt-2">
+              Welcome back 👋 Here's what's happening with your business today.
+            </p>
+
+          </div>
 
         </div>
 
@@ -103,9 +107,9 @@ function Dashboard() {
 
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8 mt-8">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-8">
 
-        <div className="lg:col-span-2">
+        <div className="xl:col-span-2">
           <RevenueChart data={monthlyRevenue} />
         </div>
 

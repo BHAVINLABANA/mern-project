@@ -69,6 +69,9 @@ function ProductDetails() {
   };
 
   const addToCart = async () => {
+    if (product.stock <= 0) {
+      return alert("This product is out of stock.");
+    }
     try {
       await api.post("/cart", {
         productId: product._id,
@@ -242,6 +245,11 @@ function ProductDetails() {
                   : "Out of Stock"}
               </span>
             </p>
+            {product.stock > 0 && product.stock <= 5 && (
+              <p className="text-orange-600 font-semibold">
+                🔥 Hurry! Only {product.stock} left in stock.
+              </p>
+            )}
 
             <p>
               <strong>Store:</strong>{" "}
@@ -252,9 +260,16 @@ function ProductDetails() {
 
           <button
             onClick={addToCart}
-            className="mt-10 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg transition"
+            disabled={product.stock <= 0}
+            className={`mt-10 px-8 py-3 rounded-lg text-white transition ${
+              product.stock > 0
+                ? "bg-blue-600 hover:bg-blue-700"
+                : "bg-gray-400 cursor-not-allowed"
+            }`}
           >
-            Add to Cart
+            {product.stock > 0
+              ? "Add to Cart"
+              : "Out of Stock"}
           </button>
 
         </div>

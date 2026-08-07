@@ -6,13 +6,21 @@ function DashboardCard({
 }) {
   return (
     <div
-      className={`rounded-xl shadow-lg p-6 text-white transition transform hover:-translate-y-1 hover:shadow-2xl ${color}`}
+      className={`${color}
+      rounded-2xl
+      shadow-lg
+      p-6
+      text-white
+      hover:-translate-y-1
+      hover:shadow-2xl
+      transition-all
+      duration-300`}
     >
       <div className="flex justify-between items-center">
 
         <div>
 
-          <p className="text-sm opacity-90">
+          <p className="text-sm opacity-80">
             {title}
           </p>
 
@@ -27,6 +35,7 @@ function DashboardCard({
         </div>
 
       </div>
+
     </div>
   );
 }

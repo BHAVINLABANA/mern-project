@@ -1,6 +1,6 @@
 function LowStockProducts({ products }) {
   return (
-    <div className="bg-white rounded-xl shadow-md p-6">
+    <div className="bg-white rounded-2xl shadow-md p-4 md:p-6">
 
       <div className="flex justify-between items-center mb-6">
 

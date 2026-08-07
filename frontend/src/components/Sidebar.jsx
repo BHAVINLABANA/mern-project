@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 
-function Sidebar() {
+function Sidebar({ closeSidebar }) {
   const linkClass = ({ isActive }) =>
     `block px-4 py-3 rounded-lg transition ${
       isActive
@@ -9,7 +9,7 @@ function Sidebar() {
     }`;
 
   return (
-    <aside className="w-64 bg-slate-900 text-white min-h-[calc(100vh-64px)]">
+    <aside className="w-64 h-full bg-slate-900 text-white">
 
       <div className="p-6 border-b border-slate-700">
 
@@ -23,6 +23,7 @@ function Sidebar() {
 
         <NavLink
           to="/vendor/dashboard"
+          onClick={closeSidebar}
           className={linkClass}
         >
           📊 Dashboard
@@ -30,6 +31,7 @@ function Sidebar() {
 
         <NavLink
           to="/vendor/store"
+          onClick={closeSidebar}
           className={linkClass}
         >
           🏪 Store
@@ -37,6 +39,7 @@ function Sidebar() {
 
         <NavLink
           to="/vendor/products"
+          onClick={closeSidebar}
           className={linkClass}
         >
           📦 Products
@@ -44,6 +47,7 @@ function Sidebar() {
 
         <NavLink
           to="/vendor/orders"
+          onClick={closeSidebar}
           className={linkClass}
         >
           📋 Orders

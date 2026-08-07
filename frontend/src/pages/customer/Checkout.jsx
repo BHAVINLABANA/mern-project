@@ -22,6 +22,8 @@ function Checkout() {
     pincode: "",
   });
 
+  const [paymentMethod, setPaymentMethod] = useState("COD");
+
   useEffect(() => {
     fetchCart();
   }, []);
@@ -74,9 +76,14 @@ function Checkout() {
 
       await api.post("/orders", {
         shippingAddress,
+        paymentMethod,
       });
 
-      toast.success("Order placed successfully!");
+      toast.success(
+        paymentMethod === "COD"
+          ? "Order placed successfully! Pay on delivery."
+          : "Payment successful!"
+      );
 
       fetchCartCount();
 
@@ -172,6 +179,37 @@ function Checkout() {
             />
 
           </div>
+
+        </div>
+
+        <div className="bg-white rounded-xl shadow p-6 mt-6">
+
+          <h2 className="text-2xl font-bold mb-5">
+            Payment Method
+          </h2>
+
+          <label className="flex items-center gap-3 cursor-pointer border rounded-lg p-4 hover:border-blue-500">
+
+            <input
+              type="radio"
+              value="COD"
+              checked={paymentMethod === "COD"}
+              onChange={(e) =>
+                setPaymentMethod(e.target.value)
+              }
+            />
+
+            <div>
+              <h3 className="font-semibold">
+                Cash on Delivery
+              </h3>
+
+              <p className="text-gray-500 text-sm">
+                Pay when your order is delivered.
+              </p>
+            </div>
+
+          </label>
 
         </div>
 

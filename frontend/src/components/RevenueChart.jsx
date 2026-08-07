@@ -28,7 +28,7 @@ function RevenueChart({ data = [] }) {
   }));
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6">
+    <div className="bg-white rounded-2xl shadow-md p-4 md:p-6">
       <div className="flex justify-between items-center mb-6">
 
         <h2 className="text-xl font-bold">
@@ -41,7 +41,7 @@ function RevenueChart({ data = [] }) {
 
        </div>
 
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={260}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="month" />

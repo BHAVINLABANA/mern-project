@@ -18,7 +18,7 @@ import ProductDetails from "./pages/customer/ProductDetails";
 import Cart from "./pages/customer/Cart";
 import Checkout from "./pages/customer/Checkout";
 import MyOrders from "./pages/customer/MyOrders";
-
+import OrderDetails from "./pages/customer/OrderDetails";
 import Wishlist from "./pages/customer/Wishlist";
 
 import Profile from "./pages/Profile";
@@ -66,6 +66,15 @@ function App() {
           element={
             <ProtectedRoute role="customer">
               <MyOrders />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/order/:id"
+          element={
+            <ProtectedRoute role="customer">
+              <OrderDetails />
             </ProtectedRoute>
           }
         />

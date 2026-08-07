@@ -6,6 +6,8 @@ const {
     getMyOrders,
     getVendorOrders,
     updateOrderStatus,
+    getOrderById,
+    cancelOrder,
 } = require("../controllers/orderController");
 
 const { protect, authorize } = require("../middleware/authMiddleware");
@@ -24,6 +26,20 @@ router.get(
   authorize("vendor"),
   getVendorOrders
 );
+
+router.get(
+  "/:id",
+  protect,
+  getOrderById
+);
+
+router.put(
+  "/:id/cancel",
+  protect,
+  authorize("customer"),
+  cancelOrder
+);
+
 router.put(
   "/:id/status",
   protect,
@@ -37,5 +53,6 @@ router.post(
   authorize("customer"),
   placeOrder
 );
+
 
 module.exports = router;

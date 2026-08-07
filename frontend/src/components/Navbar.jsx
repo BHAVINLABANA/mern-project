@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  Bars3Icon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 
@@ -8,6 +13,8 @@ function Navbar() {
 
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
+
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("user"))
@@ -30,16 +37,13 @@ function Navbar() {
     localStorage.removeItem("user");
 
     navigate("/login");
-
     window.location.reload();
   };
 
   return (
-    <nav className="bg-slate-900 text-white px-8 py-4 shadow-lg">
+    <nav className="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
 
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-
-        {/* Logo */}
+      <div className="max-w-7xl mx-auto px-5 py-4 flex justify-between items-center">
 
         <Link
           to="/"
@@ -48,29 +52,22 @@ function Navbar() {
           MERN Shop
         </Link>
 
-        {/* Navigation */}
+        {/* Desktop Menu */}
 
-        <div className="flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-6">
 
-          <Link
-            to="/"
-            className="hover:text-blue-400 transition"
-          >
-            Home
-          </Link>
-
-          {/* Customer Menu */}
+          <Link to="/">Home</Link>
 
           {user?.role === "customer" && (
             <>
               <Link
                 to="/wishlist"
-                className="relative hover:text-pink-400 transition"
+                className="relative"
               >
                 ❤️ Wishlist
 
                 {wishlistCount > 0 && (
-                  <span className="absolute -top-2 -right-4 bg-pink-600 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
+                  <span className="absolute -top-2 -right-4 bg-pink-600 text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {wishlistCount}
                   </span>
                 )}
@@ -78,96 +75,75 @@ function Navbar() {
 
               <Link
                 to="/cart"
-                className="relative hover:text-green-400 transition"
+                className="relative"
               >
                 🛒 Cart
 
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-4 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
+                  <span className="absolute -top-2 -right-4 bg-red-600 text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {cartCount}
                   </span>
                 )}
               </Link>
 
-              <Link
-                to="/my-orders"
-                className="hover:text-yellow-400 transition"
-              >
+              <Link to="/my-orders">
                 My Orders
               </Link>
             </>
           )}
 
-          {/* Vendor Menu */}
-
           {user?.role === "vendor" && (
             <>
-              <Link
-                to="/vendor/dashboard"
-                className="hover:text-blue-400 transition"
-              >
+              <Link to="/vendor/dashboard">
                 Dashboard
               </Link>
 
-              <Link
-                to="/vendor/products"
-                className="hover:text-blue-400 transition"
-              >
+              <Link to="/vendor/products">
                 Products
               </Link>
 
-              <Link
-                to="/vendor/orders"
-                className="hover:text-blue-400 transition"
-              >
+              <Link to="/vendor/orders">
                 Orders
               </Link>
             </>
           )}
 
-          {/* User Section */}
-
           {user ? (
             <>
               <Link
                 to="/profile"
-                className="flex items-center gap-2 bg-slate-800 px-3 py-2 rounded-full hover:bg-slate-700 transition"
+                className="flex items-center gap-2 bg-slate-800 px-3 py-2 rounded-full"
               >
                 <img
                   src={
-                    user?.avatar?.url ||
+                    user.avatar?.url ||
                     `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                      user?.name || "User"
+                      user.name
                     )}`
                   }
-                  alt="Profile"
-                  className="w-9 h-9 rounded-full object-cover"
+                  alt=""
+                  className="w-9 h-9 rounded-full"
                 />
 
-                <span className="font-semibold">
-                  {user.name}
-                </span>
+                <span>{user.name}</span>
               </Link>
 
               <button
                 onClick={logout}
-                className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg transition"
+                className="bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600"
               >
                 Logout
               </button>
             </>
           ) : (
             <>
-              <Link
-                to="/login"
-                className="hover:text-blue-400 transition"
-              >
+              <Link to="/login">
                 Login
               </Link>
 
               <Link
                 to="/register"
-                className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition"
+                className="bg-blue-600 px-4 py-2 rounded-lg"
               >
                 Register
               </Link>
@@ -176,7 +152,127 @@ function Navbar() {
 
         </div>
 
+        {/* Mobile Button */}
+
+        <button
+          onClick={() =>
+            setMobileMenuOpen(!mobileMenuOpen)
+          }
+          className="md:hidden"
+        >
+          {mobileMenuOpen ? (
+            <XMarkIcon className="w-8 h-8" />
+          ) : (
+            <Bars3Icon className="w-8 h-8" />
+          )}
+        </button>
+
       </div>
+
+      {/* Mobile Menu */}
+
+      {mobileMenuOpen && (
+
+        <div className="md:hidden bg-slate-800 px-5 pb-5">
+
+          <div className="flex flex-col gap-4">
+
+            <Link
+              to="/"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Home
+            </Link>
+
+            {user?.role === "customer" && (
+              <>
+                <Link
+                  to="/wishlist"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  ❤️ Wishlist ({wishlistCount})
+                </Link>
+
+                <Link
+                  to="/cart"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  🛒 Cart ({cartCount})
+                </Link>
+
+                <Link
+                  to="/my-orders"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  My Orders
+                </Link>
+              </>
+            )}
+
+            {user?.role === "vendor" && (
+              <>
+                <Link
+                  to="/vendor/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+
+                <Link
+                  to="/vendor/products"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Products
+                </Link>
+
+                <Link
+                  to="/vendor/orders"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Orders
+                </Link>
+              </>
+            )}
+
+            {user ? (
+              <>
+                <Link
+                  to="/profile"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Profile
+                </Link>
+
+                <button
+                  onClick={logout}
+                  className="bg-red-500 py-2 rounded-lg"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Login
+                </Link>
+
+                <Link
+                  to="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Register
+                </Link>
+              </>
+            )}
+
+          </div>
+
+        </div>
+
+      )}
 
     </nav>
   );

@@ -1,6 +1,6 @@
 function RecentOrders({ orders }) {
   return (
-    <div className="bg-white rounded-xl shadow-md p-6">
+    <div className="bg-white rounded-2xl shadow-md p-4 md:p-6 overflow-x-auto">
 
       <div className="flex justify-between items-center mb-6">
 
@@ -21,7 +21,7 @@ function RecentOrders({ orders }) {
       ) : (
         <div className="overflow-x-auto">
 
-          <table className="w-full">
+          <table className="min-w-[700px] w-full">
 
             <thead>
 

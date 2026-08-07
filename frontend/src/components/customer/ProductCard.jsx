@@ -110,6 +110,24 @@ function ProductCard({ product }) {
 
         </div>
 
+        <div className="mt-3">
+
+          {product.stock === 0 ? (
+            <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-medium">
+              Out of Stock
+            </span>
+          ) : product.stock <= 5 ? (
+            <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-medium">
+              Only {product.stock} left
+            </span>
+          ) : (
+            <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+              In Stock
+            </span>
+          )}
+
+        </div>
+
         <Link
           to={`/product/${product._id}`}
           className="block mt-5 text-center bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg"
