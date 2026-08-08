@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
 import api from "../services/api";
 
 const WishlistContext = createContext();
@@ -7,12 +13,32 @@ export const WishlistProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState([]);
   const [wishlistCount, setWishlistCount] = useState(0);
 
+  // =========================================================
+  // FETCH WISHLIST
+  // =========================================================
+
   const fetchWishlist = async () => {
     try {
       const token = localStorage.getItem("token");
-      const user = JSON.parse(localStorage.getItem("user"));
 
-      if (!token || user?.role !== "customer") {
+      if (!token) {
+        setWishlist([]);
+        setWishlistCount(0);
+        return;
+      }
+
+      let user = null;
+
+      try {
+        user = JSON.parse(
+          localStorage.getItem("user")
+        );
+      } catch {
+        user = null;
+      }
+
+      // Wishlist is only available for customers
+      if (user?.role !== "customer") {
         setWishlist([]);
         setWishlistCount(0);
         return;
@@ -20,13 +46,29 @@ export const WishlistProvider = ({ children }) => {
 
       const { data } = await api.get("/wishlist");
 
-      setWishlist(data.wishlist);
-      setWishlistCount(data.count);
+      setWishlist(
+        Array.isArray(data?.wishlist)
+          ? data.wishlist
+          : []
+      );
+
+      setWishlistCount(
+        Number(data?.count || 0)
+      );
     } catch (error) {
+      console.error(
+        "Wishlist Error:",
+        error.response?.data || error
+      );
+
       setWishlist([]);
       setWishlistCount(0);
     }
   };
+
+  // =========================================================
+  // INITIAL LOAD
+  // =========================================================
 
   useEffect(() => {
     fetchWishlist();
@@ -45,4 +87,9 @@ export const WishlistProvider = ({ children }) => {
   );
 };
 
-export const useWishlist = () => useContext(WishlistContext);
+// =========================================================
+// CUSTOM HOOK
+// =========================================================
+
+export const useWishlist = () =>
+  useContext(WishlistContext);

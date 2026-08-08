@@ -1,42 +1,129 @@
-function RecentOrders({ orders }) {
+import { Link } from "react-router-dom";
+import {
+  ArrowRight,
+  CalendarDays,
+  Eye,
+  Package,
+} from "lucide-react";
+
+function RecentOrders({ orders = [] }) {
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "Delivered":
+        return "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400";
+
+      case "Shipped":
+        return "bg-violet-50 text-violet-700 dark:bg-violet-950/30 dark:text-violet-400";
+
+      case "Confirmed":
+        return "bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400";
+
+      case "Cancelled":
+        return "bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400";
+
+      case "Pending":
+        return "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400";
+
+      default:
+        return "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300";
+    }
+  };
+
   return (
-    <div className="bg-white rounded-2xl shadow-md p-4 md:p-6 overflow-x-auto">
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-6">
 
-      <div className="flex justify-between items-center mb-6">
+      {/* =====================================================
+          HEADER
+      ===================================================== */}
 
-        <h2 className="text-xl font-bold">
-            🛒 Recent Orders
-        </h2>
+      <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
 
-        <span className="text-sm text-blue-600">
-            Last 5 Orders
-        </span>
+        <div className="flex items-center gap-3">
+
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400">
+            <Package size={21} />
+          </div>
+
+          <div>
+            <h2 className="text-xl font-black text-slate-900 dark:text-white">
+              Recent Orders
+            </h2>
+
+            <p className="mt-1 text-xs text-slate-400">
+              Latest orders received by your store
+            </p>
+          </div>
 
         </div>
 
+        <Link
+          to="/vendor/orders"
+          className="group inline-flex items-center gap-1.5 text-sm font-bold text-indigo-600 transition-colors hover:text-indigo-700 dark:text-indigo-400"
+        >
+          View All
+          <ArrowRight
+            size={16}
+            className="transition-transform group-hover:translate-x-1"
+          />
+        </Link>
+
+      </div>
+
+      {/* =====================================================
+          EMPTY STATE
+      ===================================================== */}
+
       {orders.length === 0 ? (
-        <p className="text-gray-500">
-          No recent orders found.
-        </p>
+        <div className="rounded-xl border border-dashed border-slate-300 py-12 text-center dark:border-slate-700">
+
+          <Package
+            size={40}
+            className="mx-auto text-slate-300 dark:text-slate-600"
+          />
+
+          <h3 className="mt-4 font-bold text-slate-700 dark:text-slate-300">
+            No Recent Orders
+          </h3>
+
+          <p className="mt-1 text-sm text-slate-400">
+            New customer orders will appear here.
+          </p>
+
+        </div>
       ) : (
+
+        /* =====================================================
+           TABLE
+        ===================================================== */
+
         <div className="overflow-x-auto">
 
-          <table className="min-w-[700px] w-full">
+          <table className="w-full min-w-[700px]">
 
             <thead>
+              <tr className="border-b border-slate-200 text-left dark:border-slate-800">
 
-              <tr className="border-b">
+                <th className="px-3 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Customer
+                </th>
 
-                <th className="text-left py-3">Customer</th>
+                <th className="px-3 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Amount
+                </th>
 
-                <th className="text-left py-3">Amount</th>
+                <th className="px-3 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Status
+                </th>
 
-                <th className="text-left py-3">Status</th>
+                <th className="px-3 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Date
+                </th>
 
-                <th className="text-left py-3">Date</th>
+                <th className="px-3 py-3 text-right text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Action
+                </th>
 
               </tr>
-
             </thead>
 
             <tbody>
@@ -45,37 +132,91 @@ function RecentOrders({ orders }) {
 
                 <tr
                   key={order._id}
-                  className="border-b hover:bg-gray-50"
+                  className="border-b border-slate-100 transition-colors hover:bg-slate-50 dark:border-slate-800/70 dark:hover:bg-slate-800/40"
                 >
 
-                  <td className="py-4">
-                    {order.customer}
+                  {/* Customer */}
+
+                  <td className="px-3 py-4">
+
+                    <div className="font-bold text-slate-800 dark:text-slate-200">
+                      {order.customer ||
+                        order.user?.name ||
+                        "Customer"}
+                    </div>
+
+                    {order.user?.email && (
+                      <div className="mt-1 text-xs text-slate-400">
+                        {order.user.email}
+                      </div>
+                    )}
+
                   </td>
 
-                  <td className="font-semibold">
-                    ₹{order.amount}
-                  </td>
+                  {/* Amount */}
 
-                  <td>
+                  <td className="px-3 py-4">
 
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        order.status === "Delivered"
-                          ? "bg-green-100 text-green-700"
-                          : order.status === "Pending"
-                          ? "bg-yellow-100 text-yellow-700"
-                          : order.status === "Cancelled"
-                          ? "bg-red-100 text-red-700"
-                          : "bg-blue-100 text-blue-700"
-                      }`}
-                    >
-                      {order.status}
+                    <span className="font-black text-indigo-600 dark:text-indigo-400">
+                      ₹
+                      {Number(
+                        order.amount ??
+                          order.totalAmount ??
+                          0
+                      ).toLocaleString("en-IN")}
                     </span>
 
                   </td>
 
-                  <td>
-                    {new Date(order.createdAt).toLocaleDateString()}
+                  {/* Status */}
+
+                  <td className="px-3 py-4">
+
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-bold ${getStatusClass(
+                        order.status ||
+                          order.orderStatus
+                      )}`}
+                    >
+                      {order.status ||
+                        order.orderStatus ||
+                        "Unknown"}
+                    </span>
+
+                  </td>
+
+                  {/* Date */}
+
+                  <td className="px-3 py-4">
+
+                    <div className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
+
+                      <CalendarDays size={14} />
+
+                      {order.createdAt
+                        ? new Date(
+                            order.createdAt
+                          ).toLocaleDateString(
+                            "en-IN"
+                          )
+                        : "N/A"}
+
+                    </div>
+
+                  </td>
+
+                  {/* Action */}
+
+                  <td className="px-3 py-4 text-right">
+
+                    <Link
+                      to={`/vendor/orders`}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-all hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600 dark:border-slate-700 dark:text-slate-400 dark:hover:border-indigo-900 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-400"
+                      title="View Orders"
+                    >
+                      <Eye size={16} />
+                    </Link>
+
                   </td>
 
                 </tr>

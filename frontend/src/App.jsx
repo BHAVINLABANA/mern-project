@@ -1,19 +1,9 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 
+// =========================
+// CUSTOMER PAGES
+// =========================
 import Home from "./pages/customer/Home";
-import Login from "./pages/auth/Login";
-import Register from "./pages/auth/Register";
-import Dashboard from "./pages/vendor/Dashboard";
-import NotFound from "./pages/NotFound";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Navbar from "./components/Navbar";
-
-import Products from "./pages/vendor/Products";
-import AddProduct from "./pages/vendor/AddProduct";
-import EditProduct from "./pages/vendor/EditProduct";
-import VendorOrders from "./pages/vendor/VendorOrders";
-import Store from "./pages/vendor/Store";
-
 import ProductDetails from "./pages/customer/ProductDetails";
 import Cart from "./pages/customer/Cart";
 import Checkout from "./pages/customer/Checkout";
@@ -21,11 +11,34 @@ import MyOrders from "./pages/customer/MyOrders";
 import OrderDetails from "./pages/customer/OrderDetails";
 import Wishlist from "./pages/customer/Wishlist";
 
+// =========================
+// AUTH PAGES
+// =========================
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+
+// =========================
+// VENDOR PAGES
+// =========================
+import Dashboard from "./pages/vendor/Dashboard";
+import Products from "./pages/vendor/Products";
+import AddProduct from "./pages/vendor/AddProduct";
+import EditProduct from "./pages/vendor/EditProduct";
+import VendorOrders from "./pages/vendor/VendorOrders";
+import Store from "./pages/vendor/Store";
+
+// =========================
+// OTHER PAGES / COMPONENTS
+// =========================
 import Profile from "./pages/Profile";
+import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Navbar from "./components/Navbar";
 
 function App() {
   const location = useLocation();
 
+  // Hide customer Navbar on auth and vendor pages
   const hideNavbar =
     location.pathname === "/login" ||
     location.pathname === "/register" ||
@@ -33,16 +46,47 @@ function App() {
 
   return (
     <>
+      {/* =========================
+          CUSTOMER NAVBAR
+      ========================= */}
+
       {!hideNavbar && <Navbar />}
 
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/product/:id" element={<ProductDetails />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+      {/* =========================
+          ROUTES
+      ========================= */}
 
-        {/* Customer Routes */}
+      <Routes>
+
+        {/* =====================================
+            PUBLIC ROUTES
+        ===================================== */}
+
+        <Route
+          path="/"
+          element={<Home />}
+        />
+
+        <Route
+          path="/product/:id"
+          element={<ProductDetails />}
+        />
+
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+
+        <Route
+          path="/register"
+          element={<Register />}
+        />
+
+
+        {/* =====================================
+            CUSTOMER ROUTES
+        ===================================== */}
+
         <Route
           path="/cart"
           element={
@@ -80,6 +124,20 @@ function App() {
         />
 
         <Route
+          path="/wishlist"
+          element={
+            <ProtectedRoute role="customer">
+              <Wishlist />
+            </ProtectedRoute>
+          }
+        />
+
+
+        {/* =====================================
+            PROFILE
+        ===================================== */}
+
+        <Route
           path="/profile"
           element={
             <ProtectedRoute>
@@ -88,7 +146,25 @@ function App() {
           }
         />
 
-        {/* Vendor Routes */}
+
+        {/* =====================================
+            VENDOR ROUTES
+        ===================================== */}
+
+        <Route
+          path="/vendor"
+          element={
+            <ProtectedRoute role="vendor">
+              <Navigate
+                to="/vendor/dashboard"
+                replace
+              />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Vendor Dashboard */}
+
         <Route
           path="/vendor/dashboard"
           element={
@@ -97,6 +173,9 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+
+        {/* Vendor Store */}
 
         <Route
           path="/vendor/store"
@@ -107,6 +186,9 @@ function App() {
           }
         />
 
+
+        {/* Vendor Products */}
+
         <Route
           path="/vendor/products"
           element={
@@ -115,6 +197,9 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+
+        {/* Add Product */}
 
         <Route
           path="/vendor/products/add"
@@ -125,6 +210,9 @@ function App() {
           }
         />
 
+
+        {/* Edit Product */}
+
         <Route
           path="/vendor/products/edit/:id"
           element={
@@ -133,6 +221,9 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+
+        {/* Vendor Orders */}
 
         <Route
           path="/vendor/orders"
@@ -143,17 +234,16 @@ function App() {
           }
         />
 
+
+        {/* =====================================
+            404
+        ===================================== */}
+
         <Route
-          path="/wishlist"
-          element={
-            <ProtectedRoute role="customer">
-              <Wishlist />
-            </ProtectedRoute>
-          }
+          path="*"
+          element={<NotFound />}
         />
 
-        {/* 404 */}
-        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

@@ -1,12 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
-import {
-  Bars3Icon,
-} from "@heroicons/react/24/outline";
+import { Bars3Icon } from "@heroicons/react/24/outline";
 
 function VendorNavbar({ onMenuClick }) {
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(
+    localStorage.getItem("user")
+  );
+
+  // =========================================================
+  // LOGOUT
+  // =========================================================
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -16,55 +20,91 @@ function VendorNavbar({ onMenuClick }) {
     window.location.reload();
   };
 
+  // =========================================================
+  // NAVBAR
+  // =========================================================
+
   return (
-    <header className="sticky top-0 z-40 bg-slate-900 shadow">
+    <header className="bg-slate-900 shadow-lg">
 
-      <div className="flex items-center justify-between h-16 px-4 md:px-6 lg:px-8">
+      <div className="flex h-16 items-center justify-between px-4 md:px-6 lg:px-8">
 
-        {/* Left */}
+        {/* =================================================
+            LEFT
+        ================================================= */}
 
         <div className="flex items-center gap-4">
 
+          {/* Mobile Menu */}
+
           <button
+            type="button"
             onClick={onMenuClick}
-            className="lg:hidden text-white"
+            className="text-white transition-colors hover:text-indigo-400 lg:hidden"
+            aria-label="Open menu"
           >
-            <Bars3Icon className="w-7 h-7" />
+            <Bars3Icon className="h-7 w-7" />
           </button>
 
-          <h1 className="text-white text-xl font-bold tracking-wide">
+          {/* Logo */}
+
+          <Link
+            to="/vendor/dashboard"
+            className="text-xl font-black tracking-wide text-white transition-colors hover:text-indigo-400"
+          >
             MERN Shop
-          </h1>
+          </Link>
+
+          <span className="hidden rounded-full bg-indigo-600/20 px-3 py-1 text-xs font-bold text-indigo-400 sm:inline-block">
+            Vendor Panel
+          </span>
 
         </div>
 
-        {/* Right */}
+        {/* =================================================
+            RIGHT
+        ================================================= */}
 
         <div className="flex items-center gap-3">
 
+          {/* Profile */}
+
           <Link
             to="/profile"
-            className="flex items-center gap-2"
+            className="group flex items-center gap-2 rounded-xl px-2 py-1.5 transition-colors hover:bg-slate-800"
           >
+
             <img
               src={
                 user?.avatar?.url ||
                 `https://ui-avatars.com/api/?name=${encodeURIComponent(
                   user?.name || "Vendor"
-                )}`
+                )}&background=4f46e5&color=fff`
               }
-              alt=""
-              className="w-10 h-10 rounded-full border-2 border-white"
+              alt="Profile"
+              className="h-10 w-10 rounded-full border-2 border-slate-600 object-cover transition-colors group-hover:border-indigo-400"
             />
 
-            <span className="hidden lg:block text-white font-medium">
-              {user?.name}
-            </span>
+            <div className="hidden lg:block">
+
+              <p className="text-sm font-bold text-white">
+                {user?.name || "Vendor"}
+              </p>
+
+              <p className="text-xs text-slate-400">
+                Vendor
+              </p>
+
+            </div>
+
           </Link>
 
+          {/* Logout */}
+
           <button
+            type="button"
             onClick={logout}
-            className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm transition"
+            className="rounded-lg bg-rose-500 px-3 py-2 text-sm font-bold text-white transition-all hover:bg-rose-600 hover:shadow-lg disabled:opacity-50"
           >
             Logout
           </button>

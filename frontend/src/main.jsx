@@ -8,22 +8,26 @@ import "./index.css";
 
 import { CartProvider } from "./context/CartContext";
 import { WishlistProvider } from "./context/WishlistContext";
+import { ThemeProvider } from "./context/ThemeContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <WishlistProvider>
-      <CartProvider>
-        <BrowserRouter>
-          <Toaster
-            position="top-right"
-            reverseOrder={false}
-            toastOptions={{
-              duration: 3000,
-            }}
-          />
-          <App />
-        </BrowserRouter>
-      </CartProvider>
-    </WishlistProvider>
+    <ThemeProvider>
+      <WishlistProvider>
+        <CartProvider>
+          <BrowserRouter>
+            <Toaster
+              position="top-right"
+              reverseOrder={false}
+              toastOptions={{
+                duration: 3000,
+              }}
+            />
+
+            <App />
+          </BrowserRouter>
+        </CartProvider>
+      </WishlistProvider>
+    </ThemeProvider>
   </React.StrictMode>
 );
