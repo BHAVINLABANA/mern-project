@@ -24,6 +24,7 @@ import Dashboard from "./pages/vendor/Dashboard";
 import Products from "./pages/vendor/Products";
 import AddProduct from "./pages/vendor/AddProduct";
 import EditProduct from "./pages/vendor/EditProduct";
+import VendorOrderDetails from "./pages/vendor/VendorOrderDetails";
 import VendorOrders from "./pages/vendor/VendorOrders";
 import Store from "./pages/vendor/Store";
 
@@ -230,6 +231,15 @@ function App() {
           element={
             <ProtectedRoute role="vendor">
               <VendorOrders />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/orders/:id"
+          element={
+            <ProtectedRoute role="vendor">
+              <VendorOrderDetails />
             </ProtectedRoute>
           }
         />

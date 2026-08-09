@@ -1,3 +1,5 @@
+import { LoaderCircle } from "lucide-react";
+
 function Loader({
   text = "Loading...",
   fullScreen = false,
@@ -6,23 +8,20 @@ function Loader({
     <div
       className={`flex items-center justify-center ${
         fullScreen
-          ? "min-h-screen bg-slate-50 dark:bg-slate-950"
-          : "py-10"
-      }`}
+          ? "min-h-screen"
+          : "min-h-[200px]"
+      } bg-slate-50 dark:bg-slate-950`}
     >
-      <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center justify-center">
 
-        {/* Spinner */}
+        <LoaderCircle
+          size={42}
+          className="animate-spin text-indigo-600 dark:text-indigo-400"
+        />
 
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-indigo-600 dark:border-slate-700 dark:border-t-indigo-400" />
-
-        {/* Text */}
-
-        {text && (
-          <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">
-            {text}
-          </p>
-        )}
+        <p className="mt-4 text-sm font-semibold text-slate-600 dark:text-slate-300">
+          {text}
+        </p>
 
       </div>
     </div>

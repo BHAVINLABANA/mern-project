@@ -12,10 +12,12 @@ import {
   UserPlus,
 } from "lucide-react";
 
-import api from "../../services/api";
+import { useAuth } from "../../context/AuthContext";
 
 function Login() {
   const navigate = useNavigate();
+
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -26,12 +28,20 @@ function Login() {
   const [showPassword, setShowPassword] =
     useState(false);
 
+  // =========================================================
+  // HANDLE CHANGE
+  // =========================================================
+
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
   };
+
+  // =========================================================
+  // LOGIN
+  // =========================================================
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,39 +54,25 @@ function Login() {
     try {
       setLoading(true);
 
-      const res = await api.post(
-        "/auth/login",
-        formData
-      );
-
-      localStorage.setItem(
-        "token",
-        res.data.token
-      );
-
-      localStorage.setItem(
-        "user",
-        JSON.stringify(res.data.user)
-      );
-
-      window.dispatchEvent(
-        new Event("storage")
+      const data = await login(
+        formData.email,
+        formData.password
       );
 
       toast.success("Login successful!");
 
-      /* =====================================================
-         ROLE BASED REDIRECT
-      ===================================================== */
+      // =====================================================
+      // ROLE BASED REDIRECT
+      // =====================================================
 
-      if (res.data.user.role === "vendor") {
+      if (data.user?.role === "vendor") {
         navigate("/vendor/dashboard");
       } else if (
-        res.data.user.role === "customer"
+        data.user?.role === "customer"
       ) {
         navigate("/");
       } else if (
-        res.data.user.role === "superadmin"
+        data.user?.role === "superadmin"
       ) {
         navigate("/admin/dashboard");
       } else {
@@ -94,18 +90,20 @@ function Login() {
     }
   };
 
-  return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-slate-50 px-4 py-10 transition-colors duration-300 dark:bg-slate-950 sm:px-6">
+  // =========================================================
+  // UI
+  // =========================================================
 
-      <div className="grid w-full max-w-5xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl shadow-slate-200/60 dark:border-slate-800 dark:bg-slate-900 dark:shadow-black/30 lg:grid-cols-2">
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10 dark:bg-slate-950">
+
+      <div className="grid w-full max-w-5xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-900 lg:grid-cols-2">
 
         {/* =================================================
-            LEFT BRAND PANEL
+            LEFT PANEL
         ================================================= */}
 
         <div className="relative hidden overflow-hidden bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 p-10 text-white lg:flex lg:flex-col lg:justify-between">
-
-          {/* Decorative circles */}
 
           <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10" />
 
@@ -115,12 +113,13 @@ function Login() {
 
             <div className="flex items-center gap-3">
 
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15 backdrop-blur">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15">
                 <ShoppingBag size={23} />
               </div>
 
               <span className="text-xl font-black">
-                MERN<span className="text-indigo-200">
+                MERN
+                <span className="text-indigo-200">
                   Shop
                 </span>
               </span>
@@ -129,7 +128,7 @@ function Login() {
 
             <div className="mt-20 max-w-md">
 
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur">
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold">
                 <ShieldCheck size={16} />
                 Secure Shopping
               </div>
@@ -142,9 +141,10 @@ function Login() {
               </h1>
 
               <p className="mt-5 leading-7 text-indigo-100">
-                Sign in to access your account, manage
-                your orders, save your favorite products,
-                and continue shopping.
+                Sign in to access your account,
+                manage your orders, save your
+                favorite products, and continue
+                shopping.
               </p>
 
             </div>
@@ -247,7 +247,8 @@ function Login() {
                   value={formData.email}
                   onChange={handleChange}
                   autoComplete="email"
-                  className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-11 pr-4 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-950"
+                  required
+                  className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-11 pr-4 text-sm outline-none transition-all focus:border-indigo-400 focus:bg-white focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:focus:border-indigo-500 dark:focus:ring-indigo-950"
                 />
 
               </div>
@@ -258,13 +259,9 @@ function Login() {
 
             <div>
 
-              <div className="mb-2 flex items-center justify-between">
-
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300">
-                  Password
-                </label>
-
-              </div>
+              <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-300">
+                Password
+              </label>
 
               <div className="relative">
 
@@ -284,7 +281,8 @@ function Login() {
                   value={formData.password}
                   onChange={handleChange}
                   autoComplete="current-password"
-                  className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-11 pr-12 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-950"
+                  required
+                  className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-11 pr-12 text-sm outline-none transition-all focus:border-indigo-400 focus:bg-white focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:focus:border-indigo-500 dark:focus:ring-indigo-950"
                 />
 
                 <button
@@ -294,12 +292,7 @@ function Login() {
                       (prev) => !prev
                     )
                   }
-                  className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-200 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200"
-                  aria-label={
-                    showPassword
-                      ? "Hide password"
-                      : "Show password"
-                  }
+                  className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800"
                 >
                   {showPassword ? (
                     <EyeOff size={18} />
@@ -317,9 +310,8 @@ function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 font-bold text-white shadow-lg shadow-indigo-200 transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60 dark:shadow-indigo-950"
+              className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 font-bold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
             >
-
               {loading ? (
                 <>
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
@@ -331,14 +323,11 @@ function Login() {
                   Sign In
                 </>
               )}
-
             </button>
 
           </form>
 
-          {/* =================================================
-              REGISTER LINK
-          ================================================= */}
+          {/* Register */}
 
           <div className="my-7 flex items-center gap-3">
 
@@ -354,15 +343,15 @@ function Login() {
 
           <Link
             to="/register"
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white font-bold text-slate-700 transition-all hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-indigo-800 dark:hover:bg-slate-800 dark:hover:text-indigo-400"
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white font-bold text-slate-700 transition-all hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
           >
             <UserPlus size={18} />
             Create an Account
           </Link>
 
-          <p className="mt-6 text-center text-xs leading-5 text-slate-400">
-            By signing in, you agree to our terms and
-            conditions.
+          <p className="mt-6 text-center text-xs text-slate-400">
+            By signing in, you agree to our terms
+            and conditions.
           </p>
 
         </div>
