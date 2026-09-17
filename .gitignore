@@ -10,3 +10,9 @@ build/
 
 # Logs
 *.log
+
+# Local Windows shortcuts
+*.lnk
+
+# Local uploads
+**/uploads/*
